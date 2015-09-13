@@ -25,4 +25,10 @@ class LesserWork():
         self.__hostText = text
 
     def __str__(self):
-        return "<" + str(self.__hostAddr) +"/"+ str(self.__hostPort) +"/"+ self.__hostProtocol.name +"/"+ self.__hostQuery +"/" + self.__hostText + ">"
+        #return "<" + str(self.__hostAddr) +"/"+ str(self.__hostPort) +"/"+ self.__hostProtocol.name +"/"+ self.__hostQuery +"/" + self.__hostText + ">"
+        return "<" + str(self.__hostAddr) +"\n"+ str(self.__hostPort) +"\n"+ self.__hostProtocol.name +"\n"+ self.__hostQuery +"\n" + self.__hostText + ">"
+
+
+
+    def process(self):
+        pass

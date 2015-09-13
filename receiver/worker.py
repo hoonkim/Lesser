@@ -27,9 +27,11 @@ class LesserWorker(threading.Thread):
             while self.__suspend:
                 time.sleep(0.5)
 
-            work = self.__q.get()
             ## process here ##
+
             #for debug
+            work = self.__q.get()
+            work.process()
             print(work)
             
             if self.__exit:
