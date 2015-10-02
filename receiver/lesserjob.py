@@ -1,4 +1,5 @@
 from worker import *
+from db.controller import *
 
 class LesserJob():
     def __init__(self):
@@ -13,4 +14,8 @@ class LesserJob():
 
     def StartWork(self):
         self.__worker.start()
+
+    def process(self):
+
+        pass
 
