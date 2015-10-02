@@ -1,5 +1,5 @@
 import json
-from HiddenApp import HiddenApp
+from bridge.HiddenApp import HiddenApp
 
 class Bridge:
 
