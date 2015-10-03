@@ -1,8 +1,8 @@
 ﻿import json
 import pymongo
-from ConvertColumn import ConvertColumn 
-from Collections.CollectionController import CollectionController
-from Schema import Schema
+from bridge.ConvertColumn import ConvertColumn 
+from bridge.collections.CollectionController import CollectionController
+from bridge.Schema import Schema
 
 
 class HiddenApp: 

@@ -1,4 +1,4 @@
-class Schema:
+ï»¿class Schema:
     def __init__(self, name, db, push):
         self.name = name
         self.schemaConnect = db[name]
@@ -7,7 +7,7 @@ class Schema:
         cursor = db['SchemaList'].find({'url':name})
         for document in cursor:
             print(document)
-        #schemaValue¸¦ Ã¤¿ö¾ßÇÔ
+
 
     def find(self, query):
         self.push("read",["id","pw"])

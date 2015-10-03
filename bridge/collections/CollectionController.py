@@ -1,5 +1,5 @@
-﻿from Collections.Apriori import Apriori
-from Collections.Indexings import Indexing
+﻿from bridge.collections.Apriori import Apriori
+from bridge.collections.Indexings import Indexing
 import pymongo
 
 class CollectionController:
