@@ -1,4 +1,4 @@
-import controller as cont
+import dockerController as cont
 
 lesser = cont.MinionController()
 test = cont.conf.configObj
@@ -8,8 +8,8 @@ test['lesserId'] = "testuser"
 
 con = lesser.upLesser( test )
 
-print ( con )
+# print ( con )
 
-print ( lesser.getContainerInfo(con.Id)['State'])
+# print ( lesser.getContainerStatus(con.Id) )
 
-lesser.allClearLesser()
+# lesser.allClearLesser()

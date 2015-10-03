@@ -1,6 +1,6 @@
 __author__ = 'dejawa'
 from docker import Client
-import configure as conf
+import dockerConfigure as conf
 import json
 
 class MinionController:
@@ -17,8 +17,13 @@ class MinionController:
         #return self.conn.containers(all="true",filters=[{"label":"${userid}"}])
         return self.conn.containers(all="true")
 
-    def getContainerInfo(self , id):
-        return self.conn.inspect_container(id)
+    def getContainerStatus(self , id):
+        state = self.conn.inspect_container(id)['State']
+
+        if state['Running']==True:
+            return 'Running'
+
+
 
 
     def startLesser(self, Id):
