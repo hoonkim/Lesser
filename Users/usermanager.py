@@ -54,11 +54,11 @@ class User():
                 return i
         return None
 
-    def getFirstMahine(self):
-        if len(machineList) == 0:
+    def getFirstMachine(self):
+        if len(self.machineList) == 0:
             return None
         else:
-            return machineList[0]
+            return self.machineList[0]
 
 
 class UserManager():

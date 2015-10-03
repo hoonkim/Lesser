@@ -27,7 +27,7 @@ def ProtocolToInt(str):
         return 4
     elif str=="HEADER":
         return 5
-
+userManager.AppendUser("torisdream","abcdefg","")
 
 class Lesserver(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -51,7 +51,13 @@ class Lesserver(BaseHTTPRequestHandler):
             urlPath += '/'
 
         appName = urlPath.partition('/')[2].rpartition('/')[0]
-        machine = userManager.searchUser(appName).getFirstMachine()
+        user = userManager.searchUser(appName)
+        if user == None:
+            print("Unavailable User")
+            #TODO: Guide move to useradd procedure
+            return 0
+
+        machine = user.getFirstMachine()
         if machine == None:
             print("No Machine for User:",appName)
             #TODO: Add Machine
