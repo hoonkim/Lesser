@@ -26,3 +26,20 @@ class LesserWork():
 
     def __str__(self):
         return "<" + str(self.__hostAddr) +"/"+ str(self.__hostPort) +"/"+ self.__hostProtocol.name +"/"+ self.__hostQuery +"/" + self.__hostText + ">"
+
+    def getProtocol(self):
+        return self.__hostProtocol
+
+    def getQuery(self):
+        return self.__hostQuery
+
+    def getText(self):
+        return self.__hostText
+
+
+class ProtocolException(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)

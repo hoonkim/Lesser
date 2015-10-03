@@ -41,7 +41,8 @@ class Lesserver(BaseHTTPRequestHandler):
 
         print("query parse", parse_qs(parse_result.query))
 
-        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path+parse_result.query, "")
+
+        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_result.query)
 
 
 
