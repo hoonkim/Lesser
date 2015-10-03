@@ -17,12 +17,13 @@ class LesserWork():
     __hostQuery = ""
     __hostText = ""
 
-    def __init__(self, addr, port, protocol, query, text):
+    def __init__(self, addr, port, protocol, query, text, machine):
         self.__hostAddr = addr
         self.__hostPort = port
         self.__hostProtocol = protocol
         self.__hostQuery = query
         self.__hostText = text
+        self.__machine = machine
 
     def __str__(self):
         return "<" + str(self.__hostAddr) +"/"+ str(self.__hostPort) +"/"+ self.__hostProtocol.name +"/"+ self.__hostQuery +"/" + self.__hostText + ">"
@@ -35,6 +36,9 @@ class LesserWork():
 
     def getText(self):
         return self.__hostText
+
+    def getMachine(self):
+        return self.__machine
 
 
 class ProtocolException(Exception):

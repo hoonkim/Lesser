@@ -1,7 +1,12 @@
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
+
 sys.path.append("../")
+
 from users.usermanager import *
+import dockermanager.controller as cont
+import dockermanager.configure as conf
+
 from urllib.parse import *
 from lesserjob import *
 import time
@@ -13,6 +18,7 @@ hostPort = 9000
 lesserJob = LesserJob()
 
 userManager = UserManager()
+minionController = cont.MinionController()
 
 def ProtocolToInt(str):
     if str=="GET":
@@ -60,14 +66,22 @@ class Lesserver(BaseHTTPRequestHandler):
         machine = user.getFirstMachine()
         if machine == None:
             print("No Machine for User:",appName)
-            #TODO: Add Machine
+            lesser = cont.MinionController()
+            test = conf.configObj
+
+            test['lesserId'] = user.GetUsername()
+
+            con = lesser.upLesser(test)
+
+            print ("New Server:",con.Id)
+
+            machine = Machine("127.0.0.1", con.Id, con.mongoPort)
+            user.AddMachine(machine)
+            
 
         #TODO: Add Machine argument
-        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_result.query)
+        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_result.query,machine)
 
-
-
-            
 
     def do_POST(self):
         self.send_response(200)

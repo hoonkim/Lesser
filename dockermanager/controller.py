@@ -1,6 +1,6 @@
 __author__ = 'dejawa'
 from docker import Client
-import configure as conf
+import dockermanager.configure as conf
 import json
 
 class MinionController:

@@ -31,6 +31,8 @@ class LesserWorker(threading.Thread):
             ## process here ##
             #for debug
             print(work)
+
+            work.getMachine()
             
             if self.__exit:
                 break

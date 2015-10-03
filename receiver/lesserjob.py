@@ -1,6 +1,10 @@
 from worker import *
 from db.controller import *
 
+import sys
+sys.path.append("../")
+from users.usermanager import *
+
 class LesserJob():
     def __init__(self):
         self.__worker = LesserWorker()
@@ -9,8 +13,8 @@ class LesserJob():
             HostProtocol.POST: self.post
         }
 
-    def AddWork(self, hostAddr, hostPort, hostProtocol, hostQuery, hostText):
-        work = LesserWork(ipaddress.ip_address(hostAddr), hostPort, HostProtocol(hostProtocol), hostQuery, hostText)
+    def AddWork(self, hostAddr, hostPort, hostProtocol, hostQuery, hostText, machine):
+        work = LesserWork(ipaddress.ip_address(hostAddr), hostPort, HostProtocol(hostProtocol), hostQuery, hostText, machine)
         self.__worker.AddWork(work)
 
     def GetWork(self):
