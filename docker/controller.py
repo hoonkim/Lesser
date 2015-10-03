@@ -18,28 +18,9 @@ class MinionController:
         return self.conn.containers(all="true")
 
     def getContainerInfo(self , id):
-        return self.conn.inspect_container(id)
+        self.conn.info()
 
 
-    def startLesser(self, Id):
-
-        self.conn.start ( Id ,publish_all_ports=True)
-        portInfo = self.conn.inspect_container(Id)['NetworkSettings']['Ports']
-
-        ports = portInfo.keys()
-        info = conf.Info()
-        for k,v in portInfo.items():
-            if '/' in k:
-                k = k.split('/')[0]
-
-            if k == conf.mongoPort:
-                info.mongoPort = v[0]['HostPort']
-            if k == conf.clientPort:
-                info.clientPort = v[0]['HostPort']
-
-            info.Id = Id
-
-        return info
 
     #user lesser minion create
     # image, command=None, hostname=None, user=None,
@@ -111,20 +92,19 @@ class MinionController:
 
             info.Id = container['Id']
             # print ("K is "+ k + " V is " + v[0]['HostPort'] )
-            # print (info)
+            print (info)
         return info
+
+
+
 
 
     #user lesser minion delete
     def delLesser(self, containerid):
         return self.conn.remove_container( containerid )
 
-    def stopLesser(self, containerid):
+    def downLesser(self, containerid):
         return self.conn.stop( containerid )
-
-    def downLesser(self, containerId):
-        self.conn.stop( containerId )
-        return self.conn.stop( containerId )
 
     def statusLesser(self, containerid):
         ret = self.conn.stats(containerid)
