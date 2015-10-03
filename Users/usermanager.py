@@ -1,5 +1,7 @@
 import hashlib
 import os
+from enum import Enum
+from pymongo import MongoClient
 
 SALT_KEY = 183
 
@@ -22,7 +24,7 @@ class User():
 
         self.machineList = list()
 
-        if hashkey == None:
+        if hashKey == None:
             self.userpassword = hashlib.md5((password+str(salt)).encode()).hexdigest()
             self.userHashKey = hashlib.md5((username+str(salt)).encode()).hexdigest()
         else:
@@ -44,23 +46,33 @@ class User():
     
     def findMachine(self, searchType, searchValue):
         for i in self.machineList:
-            if searchType == SearchType.ADDR and i.addr = searchValue:
+            if searchType == SearchType.ADDR and i.addr == searchValue:
                 return i
-            elif searchType == SearchType.UUID and i.uuid = searchValue:
+            elif searchType == SearchType.UUID and i.uuid == searchValue:
                 return i
-            elif searchType == SearchType.PORT and i.port = searchValue:
+            elif searchType == SearchType.PORT and i.port == searchValue:
                 return i
         return None
 
 
 class UserManager():
+
+    __mongoIp = 'localhost'
+    __mongoPoprt = 27017
+
     def __init__(self):
         self.userlist = list()
 
     def loadUser(self):
-        #TO DO: implement mongodb code here! :)
+        client = MongoClient(self.__mongoIp, self.__mongoPort)
+        userList = client['users'].find()
 
-        return None
+        for user in userList :
+            self.AppendUser(user['username'],
+                            user['password'],
+                            user['hashkey'])
+
+        client.close()
 
     #if exist user contain hashKey Value.
     def AppendUser(self, username, password, hashKey):
@@ -76,22 +88,3 @@ class UserManager():
                 return i
         return None
 
-
-m = UserManager()
-
-m.AppendUser("hello","world")
-m.AppendUser("hello2","world")
-m.AppendUser("hello3","world")
-m.AppendUser("hello4","world")
-m.AppendUser("hello5","world")
-m.AppendUser("hello6","world")
-m.AppendUser("hello7","world")
-m.AppendUser("hello8","world")
-m.AppendUser("hello9","world")
-
-aa = m.searchUser("hello")
-
-if aa != None:
-    print(aa.GetUserHashKey())
-else:
-    print("None")
