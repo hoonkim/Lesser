@@ -54,6 +54,12 @@ class User():
                 return i
         return None
 
+    def getFirstMahine(self):
+        if len(machineList) == 0:
+            return None
+        else:
+            return machineList[0]
+
 
 class UserManager():
 
@@ -87,4 +93,3 @@ class UserManager():
             if i.GetUsername() == username:
                 return i
         return None
-

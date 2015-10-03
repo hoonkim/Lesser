@@ -1,4 +1,7 @@
+import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
+sys.path.append("../")
+from users.usermanager import *
 from urllib.parse import *
 from lesserjob import *
 import time
@@ -8,6 +11,8 @@ hostName = "localhost"
 hostPort = 9000
 
 lesserJob = LesserJob()
+
+userManager = UserManager()
 
 def ProtocolToInt(str):
     if str=="GET":
@@ -41,7 +46,17 @@ class Lesserver(BaseHTTPRequestHandler):
 
         print("query parse", parse_qs(parse_result.query))
 
+        urlPath = parse_result.path
+        if urlPath.endswith('/') == False:
+            urlPath += '/'
 
+        appName = urlPath.partition('/')[2].rpartition('/')[0]
+        machine = userManager.searchUser(appName).getFirstMachine()
+        if machine == None:
+            print("No Machine for User:",appName)
+            #TODO: Add Machine
+
+        #TODO: Add Machine argument
         lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_result.query)
 
 
