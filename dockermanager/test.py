@@ -3,7 +3,7 @@ import dockermanager.configure as conf
 #print ( conn.containers(all="true",filters={"labels":""}) )
 
 lesser = cont.MinionController()
-test = conf.conconfigObj
+test = conf.configObj
 
 # test["user"] = "test"
 # test['mongo'] = 2702
