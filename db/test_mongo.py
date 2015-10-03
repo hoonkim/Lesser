@@ -1,5 +1,5 @@
 from unittest import TestCase
-from controller import Mongo
+from db.controller import Mongo
 
 __author__ = 'kimothy'
 

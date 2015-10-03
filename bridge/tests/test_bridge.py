@@ -1,7 +1,7 @@
 ﻿import sys
 from bridge.Bridge import Bridge
 from unittest import TestCase
-from worker import *
+
 
 __author__ = 'honghee'
 

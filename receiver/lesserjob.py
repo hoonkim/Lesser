@@ -1,4 +1,4 @@
-from worker import *
+from receiver.worker import *
 from db.controller import *
 
 import sys

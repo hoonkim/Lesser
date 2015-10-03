@@ -1,5 +1,5 @@
-import controller as cont
-import configure as conf
+import dockermanager.controller as cont
+import dockermanager.configure as conf
 #print ( conn.containers(all="true",filters={"labels":""}) )
 
 lesser = cont.MinionController()

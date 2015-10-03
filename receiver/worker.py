@@ -1,7 +1,7 @@
 import threading
 from queue import Queue
 import time
-from bamboo import *
+from receiver.bamboo import *
 
 class LesserWorker(threading.Thread):
     __q = Queue()

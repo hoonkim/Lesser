@@ -8,7 +8,7 @@ import dockermanager.controller as cont
 import dockermanager.configure as conf
 
 from urllib.parse import *
-from lesserjob import *
+from receiver.lesserjob import *
 import time
 
 

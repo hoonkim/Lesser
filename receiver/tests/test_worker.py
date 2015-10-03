@@ -1,5 +1,5 @@
 from unittest import TestCase
-from worker import *
+from receiver.worker import *
 
 __author__ = 'kimothy'
 

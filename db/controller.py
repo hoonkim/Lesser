@@ -1,7 +1,7 @@
 __author__ = 'HoonKim'
 
 from pymongo import MongoClient
-from http_parser import *
+from parsers.http_parser import *
 
 class Mongo:
 
