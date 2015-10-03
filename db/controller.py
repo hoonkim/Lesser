@@ -1,28 +1,33 @@
 __author__ = 'HoonKim'
 
 from pymongo import MongoClient
-
+from http_parser import *
 
 class Mongo:
 
     def __init__(self):
-        self.client = MongoClient('localhost', 27017)
+        self.__connections = {}
 
-    @staticmethod
-    def get_server(token):
-        return token
+    def getDB(self, machine):
+        if machine.uuid not in self.__connections :
+            connection = {
+                'machine' : machine,
+                'db' : MongoClient(machine.addr, machine.port)
+            }
 
-    def push(self, url, body, token) :
-        server = self.get_server(token)
-        if server is not None :
-            db = self.client[server]
-        else :
-            return False
+        return connection[machine.uuid]
 
-        collection_name = url[-1]
-        collection = db[collection_name]
-        collection.insert(body)
+    def getConnectionCount(self) :
+        return len(self.__conections)
 
-        return True
+    def insert(self, schema, body, machine) :
+        return self.getDB(machine)[schema].insert(body)
+
+    def find(self, schema, condition, machine):
+        return self.getDB(machine)[schema].find(condition)
+
+
+
+
 
 
