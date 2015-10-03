@@ -10,8 +10,6 @@ class LesserJob():
         }
 
     def AddWork(self, hostAddr, hostPort, hostProtocol, hostQuery, hostText):
-        print("a :" + hostQuery)
-        print("v :" + hostText)
         work = LesserWork(ipaddress.ip_address(hostAddr), hostPort, HostProtocol(hostProtocol), hostQuery, hostText)
         self.__worker.AddWork(work)
 
