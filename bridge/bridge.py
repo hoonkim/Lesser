@@ -1,5 +1,6 @@
 ﻿import json
-from HiddenApp import HiddenApp
+from bridge.hidden_app import HiddenApp
+
 
 class Bridge:
 
@@ -12,13 +13,7 @@ class Bridge:
             self.appList[name] = HiddenApp()
             self.appList[name].connect(name)
         return self.appList[name]
-        #if any(name == key for key in self.appList.keys()):
-        #    if self.appList.get(name) == None:
-        #        self.appList[name] = HiddenApp()
-        #        self.appList[name].connect(name)
-        #    return self.appList[name]
-        #else:
-        #    return None
+  
 
     def createApp(self, name):
         self.appList[name] = HiddenApp().create(name)

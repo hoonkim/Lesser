@@ -74,7 +74,7 @@ class Apriori:
         index =0
         for key in self.HashCount:
             index = index+1
-            Compare(key,itemsetString)
+            self.compare(key,itemsetString)
             
     def powerset(self,items,size):
         combo = []
