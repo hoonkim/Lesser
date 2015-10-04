@@ -12,7 +12,7 @@ from receiver.lesserjob import *
 import time
 
 
-hostName = "175.126.106.125"
+hostName = "175.126.105.125"
 hostPort = 80
 
 lesserJob = LesserJob()
