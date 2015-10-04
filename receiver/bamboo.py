@@ -36,9 +36,6 @@ class LesserWork():
         return "<" + str(self.__hostAddr) +"/"+ str(self.__hostPort) +"/"+ self.__hostProtocol.name +"/"+ self.__hostUrl +"/"+ str(self.__hostQuery) +"/" + self.__hostText + ">"
 
     def process(self):
-        if self.__hostProtocol > HostProtocol.POST :
-            raise ProtocolException("Unsupported Protocol")
-
         if self.__hostProtocol is HostProtocol.GET :
             self.get()
         elif self.__hostProtocol is HostProtocol.POST:

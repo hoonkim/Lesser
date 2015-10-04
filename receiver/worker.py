@@ -19,6 +19,20 @@ class LesserWorker(threading.Thread):
         return a
 
     def GetWorkCount(self):
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         return self.__q.qsize()
 
     
