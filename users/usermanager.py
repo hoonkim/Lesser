@@ -64,7 +64,7 @@ class User():
 class UserManager():
 
     __mongoIp = 'localhost'
-    __mongoPoprt = 27017
+    __mongoPort = 27017
 
     def __init__(self):
         self.userlist = list()
