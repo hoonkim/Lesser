@@ -11,28 +11,21 @@ class MinionController:
 #docker mongo db image create/start/stop/replset/sharding
 
     def getAllContainers(self):
-        return self.conn.containers()
+        return self.conn.containers(all=True)
 
     def getUserContainers(self):
         #return self.conn.containers(all="true",filters=[{"label":"${userid}"}])
         return self.conn.containers(all="true")
 
-    def getContainerInfo(self , id):
-        self.conn.info()
+    def isContainerRunning(self , Id):
+        status = self.conn.inspect_container(Id)['State']
+        if status['Running'] :
+            return True
+        return False
+        # if status['']
 
 
-
-    #user lesser minion create
-    # image, command=None, hostname=None, user=None,
-        #                  detach=False, stdin_open=False, tty=False,
-        #                  mem_limit=None, ports=None, environment=None,
-        #                  dns=None, volumes=None, volumes_from=None,
-        #                  network_disabled=False, name=None, entrypoint=None,
-        #                  cpu_shares=None, working_dir=None, domainname=None,
-        #                  memswap_limit=None, cpuset=None, host_config=None,
-        #                  mac_address=None, labels=None, volume_driver=None
-    def upLesser(self, info):
-
+    def createLesser(self, info):
         obj = conf.configObj
         mongo={}
         lesser={}
@@ -73,11 +66,12 @@ class MinionController:
             working_dir=obj['working_dir'],
             labels=obj['labels']
         )
+        return container['Id']
 
-        #print (container)
-        #print (mongo , lesser)
-        self.conn.start ( container['Id'] ,publish_all_ports=True)
-        portInfo = self.conn.inspect_container(container)['NetworkSettings']['Ports']
+    def startLesser(self, Id):
+
+        self.conn.start ( Id ,publish_all_ports=True)
+        portInfo = self.conn.inspect_container(Id)['NetworkSettings']['Ports']
 
         ports = portInfo.keys()
         info = conf.Info()
@@ -90,21 +84,36 @@ class MinionController:
             if k == conf.clientPort:
                 info.clientPort = v[0]['HostPort']
 
-            info.Id = container['Id']
+            info.Id = Id
             # print ("K is "+ k + " V is " + v[0]['HostPort'] )
-            print (info)
         return info
 
 
+    #user lesser minion create
+    # image, command=None, hostname=None, user=None,
+        #                  detach=False, stdin_open=False, tty=False,
+        #                  mem_limit=None, ports=None, environment=None,
+        #                  dns=None, volumes=None, volumes_from=None,
+        #                  network_disabled=False, name=None, entrypoint=None,
+        #                  cpu_shares=None, working_dir=None, domainname=None,
+        #                  memswap_limit=None, cpuset=None, host_config=None,
+        #                  mac_address=None, labels=None, volume_driver=None
+    def upLesser(self, info):
+
+        containerId = self.createLesser(info)
+        return self.startLesser(containerId)
 
 
+    def stopLesser(self, Id):
+        return self.conn.stop( Id )
 
     #user lesser minion delete
-    def delLesser(self, containerid):
-        return self.conn.remove_container( containerid )
+    def delLesser(self, Id):
+        return self.conn.remove_container( Id )
 
-    def downLesser(self, containerid):
-        return self.conn.stop( containerid )
+    def downLesser(self, Id):
+        self.stopLesser(Id)
+        return self.delLesser(Id)
 
     def statusLesser(self, containerid):
         ret = self.conn.stats(containerid)
