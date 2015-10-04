@@ -12,8 +12,8 @@ from receiver.lesserjob import *
 import time
 
 
-hostName = "localhost"
-hostPort = 9000
+hostName = "175.126.106.125"
+hostPort = 80
 
 lesserJob = LesserJob()
 
@@ -102,7 +102,7 @@ class Lesserver(BaseHTTPRequestHandler):
         lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, "{}" ,machine)
 
 
-    def do_ (self):
+    def do_POST (self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -113,7 +113,7 @@ class Lesserver(BaseHTTPRequestHandler):
         if urlPath.endswith('/') == False:
             urlPath += '/'
 
-        appName = urlPath.partition('/')[2].rpartition('/')[0]
+        appName = urlPath.split('/')[1]
         user = userManager.searchUser(appName)
         if user == None:
             print("Unavailable User")
