@@ -24,7 +24,7 @@ class HiddenApp:
 
     def connect(self, name):
         
-        self.db = pymongo.MongoClient(self.__machine.addr, self.__machine.port)[name]
+        self.db = pymongo.MongoClient(self.__machine.addr, int(self.__machine.port))[name]
         self.collectionController = CollectionController(self.db)
 
         self.columnList = list()   
