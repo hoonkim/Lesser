@@ -63,6 +63,24 @@ class Lesserver(BaseHTTPRequestHandler):
             #TODO: Guide move to useradd procedure
             return 0
 
+        abcd = parse_qs(parse_result.query)
+
+        qsDict = dict()
+        for key in abcd:
+            qsDict[key] = abcd[key][0]
+        print(qsDict)
+
+        urlPath = parse_result.path
+        if urlPath.endswith('/') == False:
+            urlPath += '/'
+
+        appName = urlPath.split('/')[1]
+        user = userManager.searchUser(appName)
+        if user is None:
+            print("Unavailable User", appName)
+            #TODO: Guide move to useradd procedure
+            return 0
+
         machine = user.getFirstMachine()
         if machine is None:
             print("No Machine for User:",appName)
@@ -73,14 +91,16 @@ class Lesserver(BaseHTTPRequestHandler):
 
             con = lesser.upLesser(test)
 
-            print ("New Server:",con.Id)
+            print ("New Server:",con.Id," port:", con.mongoPort)
 
-            machine = Machine("127.0.0.1", con.Id, con.mongoPort)
+
+
+            machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             user.AddMachine(machine)
-            
 
         #TODO: Add Machine argument
-        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), "{}" ,machine)
+        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, "{}" ,machine)
+
 
     def do_ (self):
         self.send_response(200)
@@ -127,17 +147,28 @@ class Lesserver(BaseHTTPRequestHandler):
 
         content_length = int(self.headers.get('content-length', 0))  #read header
         #print("content-length:",content_length) #length
-        encoded_body = self.rfile.read(content_length) 
+        encoded_body = self.rfile.read(content_length)
         #print(type(encoded_body)) #type
         #print(encoded_body.decode('utf-8')) #encode output
 
-        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), encoded_body.decode('utf-8'),machine)
+        abcd = parse_qs(parse_result.query)
+
+        qsDict = dict()
+        for key in abcd:
+            qsDict[key] = abcd[key][0]
+        print(qsDict)
+
+
+        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, encoded_body.decode('utf-8'),machine)
 
 
 
 myServer = HTTPServer((hostName, hostPort), Lesserver)
 lesserJob.start_work()
 print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
+
+userManager.loadUser()
+
 
 try:
     myServer.serve_forever()
