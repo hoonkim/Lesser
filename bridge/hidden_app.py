@@ -7,11 +7,12 @@ from bridge.schema import Schema
 
 class HiddenApp: 
 
-    def __init__(self): 
+    def __init__(self, machine):
         self.schemaList = dict()
         self.columnList = dict()
         self.THRESHOLD = 1000000;#10000
         self.pushCount = 0;
+        self.__machine = machine
 
     def schema(self, name): 
         if self.schemaList.get(name) != None:
@@ -23,7 +24,7 @@ class HiddenApp:
 
     def connect(self, name):
         
-        self.db = pymongo.MongoClient("mongodb://175.126.105.125:27017")[name]
+        self.db = pymongo.MongoClient(self.__machine.addr, self.__machine.port)[name]
         self.collectionController = CollectionController(self.db)
 
         self.columnList = list()   

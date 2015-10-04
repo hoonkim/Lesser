@@ -13,7 +13,7 @@
             keyList.append(self.name+"."+key)
         self.push("read",keyList)
         #change Query fit schemaValue
-        return self.schemaConnect.find(query)
+        return self.schemaConnect.find_one(query)
 
     def insert(self, query):
         keyList=list()
@@ -31,7 +31,7 @@
                 self.schemalistConnection.update({'URL':self.name} , {'$push':{'column':key}},True)
         self.push("create",keyList)
 
-        self.schemaConnect.insert(query)  
+        return self.schemaConnect.insert_one(query)
 
     def allColumnList(self):
         allColumn = []

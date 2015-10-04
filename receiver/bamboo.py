@@ -2,6 +2,7 @@ from enum import Enum
 import ipaddress
 from pymongo import MongoClient
 import json
+from bridge.bridge import Bridge
 
 
 class HostProtocol(Enum):
@@ -42,17 +43,29 @@ class LesserWork():
             self.post()
 
     def get(self):
-        client = MongoClient(self.__machine.addr, self.__machine.port )
-        db = client.db
-        result = db[self.__hostUrl].find(self.__hostQuery)
+        #client = MongoClient(self.__machine.addr, self.__machine.port )
+        #db = client.db
+        #result = db[self.__hostUrl].find(self.__hostQuery)
+        bridge = Bridge(self.__machine)
+        result = bridge.application('lesser').schema(self.__hostUrl).find(self.__hostQuery)
         print(json.dumps(result))
+
+
         return json.dumps(result)
 
     def post(self):
-        client = MongoClient(self.__machine.addr, self.__machine.port )
-        db = client.db
-        result = {'object_id' : db[self.__hostUrl].insert(self.__hostText).inserted_id}
+        #client = MongoClient(self.__machine.addr, self.__machine.port )
+        #db = client.db
+        #result = {'object_id' : db[self.__hostUrl].insert(self.__hostText).inserted_id}
+        bridge = Bridge(self.__machine)
+        result = {'object_id' :
+                      bridge.application('lesser')
+                          .schema(self.__hostUrl)
+                          .insert(self.__hostText).inserted_id
+                  }
+
         print(json.dumps(result))
+
         return json.dumps(result)
 
 
