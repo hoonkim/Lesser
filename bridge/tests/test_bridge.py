@@ -1,5 +1,5 @@
 ﻿import sys
-from bridge.Bridge import Bridge
+from bridge.bridge import Bridge
 from unittest import TestCase
 
 
