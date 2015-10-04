@@ -80,7 +80,7 @@ class Lesserver(BaseHTTPRequestHandler):
             
 
         #TODO: Add Machine argument
-        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_result.query,machine)
+        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), "{}" ,machine)
 
 
     def do_POST(self):
@@ -89,6 +89,32 @@ class Lesserver(BaseHTTPRequestHandler):
         self.end_headers()
 
         parse_result = urlparse(self.path)
+        urlPath = parse_result.path
+        
+        if urlPath.endswith('/') == False:
+            urlPath += '/'
+
+        appName = urlPath.partition('/')[2].rpartition('/')[0]
+        user = userManager.searchUser(appName)
+        if user == None:
+            print("Unavailable User")
+            #TODO: Guide move to useradd procedure
+            return 0
+
+        machine = user.getFirstMachine()
+        if machine == None:
+            print("No Machine for User:",appName)
+            lesser = cont.MinionController()
+            test = conf.configObj
+
+            test['lesserId'] = user.GetUsername()
+
+            con = lesser.upLesser(test)
+
+            print ("New Server:",con.Id)
+
+            machine = Machine("127.0.0.1", con.Id, con.mongoPort)
+            user.AddMachine(machine)
 
         #print("client addr", self.client_address) #{'127.0.0.1', 50286}
         #print("command", self.command) #POST
@@ -105,7 +131,7 @@ class Lesserver(BaseHTTPRequestHandler):
         #print(type(encoded_body)) #type
         #print(encoded_body.decode('utf-8')) #encode output
 
-        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path+parse_result.query, encoded_body.decode('utf-8'))
+        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), encoded_body.decode('utf-8'),machine)
 
 
 
