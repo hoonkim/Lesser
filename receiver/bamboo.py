@@ -1,5 +1,8 @@
 from enum import Enum
 import ipaddress
+from pymongo import MongoClient
+import json
+
 
 class HostProtocol(Enum):
     GET = 0
@@ -8,6 +11,8 @@ class HostProtocol(Enum):
     DELETE = 3
     OPTION = 4
     HEADER = 5
+
+
 
 
 class LesserWork():
@@ -30,17 +35,29 @@ class LesserWork():
     def __str__(self):
         return "<" + str(self.__hostAddr) +"/"+ str(self.__hostPort) +"/"+ self.__hostProtocol.name +"/"+ self.__hostUrl +"/"+ str(self.__hostQuery) +"/" + self.__hostText + ">"
 
-    def getProtocol(self):
-        return self.__hostProtocol
+    def process(self):
+        if self.__hostProtocol > HostProtocol.POST :
+            raise ProtocolException("Unsupported Protocol")
 
-    def getQuery(self):
-        return self.__hostQuery
+        if self.__hostProtocol is HostProtocol.GET :
+            self.get()
+        elif self.__hostProtocol is HostProtocol.POST:
+            self.post()
 
-    def getText(self):
-        return self.__hostText
+    def get(self):
+        client = MongoClient(self.__machine.addr, self.__machine.port )
+        db = client.db
+        result = db[self.__hostUrl].find(self.__hostQuery)
+        print(json.dumps(result))
+        return json.dumps(result)
 
-    def getMachine(self):
-        return self.__machine
+    def post(self):
+        client = MongoClient(self.__machine.addr, self.__machine.port )
+        db = client.db
+        result = {'object_id' : db[self.__hostUrl].insert(self.__hostText).inserted_id}
+        print(json.dumps(result))
+        return json.dumps(result)
+
 
 
 class ProtocolException(Exception):

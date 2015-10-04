@@ -32,7 +32,7 @@ class LesserWorker(threading.Thread):
             #for debug
             print(work)
 
-            work.getMachine()
+            work.process()
             
             if self.__exit:
                 break

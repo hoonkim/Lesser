@@ -58,13 +58,13 @@ class Lesserver(BaseHTTPRequestHandler):
 
         appName = urlPath.partition('/')[2].rpartition('/')[0]
         user = userManager.searchUser(appName)
-        if user == None:
+        if user is None:
             print("Unavailable User")
             #TODO: Guide move to useradd procedure
             return 0
 
         machine = user.getFirstMachine()
-        if machine == None:
+        if machine is None:
             print("No Machine for User:",appName)
             lesser = cont.MinionController()
             test = conf.configObj
@@ -80,10 +80,9 @@ class Lesserver(BaseHTTPRequestHandler):
             
 
         #TODO: Add Machine argument
-        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), "{}" ,machine)
+        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), "{}" ,machine)
 
-
-    def do_POST(self):
+    def do_ (self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -102,7 +101,8 @@ class Lesserver(BaseHTTPRequestHandler):
             return 0
 
         machine = user.getFirstMachine()
-        if machine == None:
+
+        if machine is None:
             print("No Machine for User:",appName)
             lesser = cont.MinionController()
             test = conf.configObj
@@ -131,12 +131,12 @@ class Lesserver(BaseHTTPRequestHandler):
         #print(type(encoded_body)) #type
         #print(encoded_body.decode('utf-8')) #encode output
 
-        lesserJob.AddWork(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), encoded_body.decode('utf-8'),machine)
+        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, parse_qs(parse_result.query), encoded_body.decode('utf-8'),machine)
 
 
 
 myServer = HTTPServer((hostName, hostPort), Lesserver)
-lesserJob.StartWork()
+lesserJob.start_work()
 print(time.asctime(), "Server Starts - %s:%s" % (hostName, hostPort))
 
 try:
