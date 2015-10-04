@@ -71,9 +71,11 @@ class UserManager():
 
     def loadUser(self):
         client = MongoClient(self.__mongoIp, self.__mongoPort)
-        userList = client['users'].find()
+        userList = client['lesser']['users'].find()
+        print("userlist load")
 
         for user in userList :
+            print(user['username'] + user['password'])
             self.AppendUser(user['username'],
                             user['password'],
                             user['hashkey'])

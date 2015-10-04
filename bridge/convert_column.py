@@ -1,4 +1,6 @@
 ﻿import sys
+
+
 class ConvertColumn:
 
     def __init__(self, columnList,db):
