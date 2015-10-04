@@ -13,8 +13,8 @@ class LesserJob():
             HostProtocol.POST: self.post
         }
 
-    def AddWork(self, hostAddr, hostPort, hostProtocol, hostQuery, hostText, machine):
-        work = LesserWork(ipaddress.ip_address(hostAddr), hostPort, HostProtocol(hostProtocol), hostQuery, hostText, machine)
+    def AddWork(self, hostAddr, hostPort, hostProtocol, hostUrl, hostQuery, hostText, machine):
+        work = LesserWork(ipaddress.ip_address(hostAddr), hostPort, HostProtocol(hostProtocol), hostUrl, hostQuery, hostText, machine)
         self.__worker.AddWork(work)
 
     def GetWork(self):
