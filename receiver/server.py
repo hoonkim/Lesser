@@ -56,7 +56,7 @@ class Lesserver(BaseHTTPRequestHandler):
         if urlPath.endswith('/') == False:
             urlPath += '/'
 
-        appName = urlPath.partition('/')[2].rpartition('/')[0]
+        appName = urlPath.split('/')[1]
         user = userManager.searchUser(appName)
         if user is None:
             print("Unavailable User")
@@ -75,6 +75,8 @@ class Lesserver(BaseHTTPRequestHandler):
             urlPath += '/'
 
         appName = urlPath.split('/')[1]
+        print("####User:",appName)
+        
         user = userManager.searchUser(appName)
         if user is None:
             print("Unavailable User", appName)

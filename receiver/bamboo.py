@@ -48,10 +48,10 @@ class LesserWork():
         #result = db[self.__hostUrl].find(self.__hostQuery)
         bridge = Bridge(self.__machine)
         result = bridge.application('lesser').schema(self.__hostUrl).find(self.__hostQuery)
-        print(json.dumps(result))
+        print(result)
 
 
-        return json.dumps(result)
+        return result
 
     def post(self):
         #client = MongoClient(self.__machine.addr, self.__machine.port )
@@ -64,9 +64,9 @@ class LesserWork():
                           .insert(self.__hostText).inserted_id
                   }
 
-        print(json.dumps(result))
+        print(result)
 
-        return json.dumps(result)
+        return result
 
 
 
