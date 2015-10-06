@@ -1,7 +1,7 @@
 __author__ = 'dejawa'
 
-host = '175.126.105.125' #server ip
-port = '22375'           #server port
+host = 'inputServerIP' #server ip
+port = 'inputServerDockerPort'           #server docker port
 
 
 clientPort = '80'     #example of lesser client port in docker image
