@@ -126,7 +126,6 @@ class MinionController:
             #for stat in lesser.statusLesser(i['Id']):
                 # print (stat)
             self.downLesser(i['Id'])
-            self.delLesser( i['Id'])
 
     def cliConfigure(self, obj):
         return
