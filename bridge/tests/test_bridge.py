@@ -10,4 +10,5 @@ class TestBridge(TestCase):
 
     def test_dummy(self):
         bridge = Bridge()
+        print("ddd")
         bridge.application('App1').Schema('JoinPage').find({"id":"sf","pw":"WJ"}); 
