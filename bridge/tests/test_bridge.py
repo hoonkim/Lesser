@@ -5,12 +5,15 @@ from unittest import TestCase
 __author__ = 'honghee'
 
 
+class Machine():
+    def __init__(self, addr, uuid, port):
+        self.addr = addr
+        self.uuid = uuid
+        self.port = port
+
 class TestBridge(TestCase):
     def test_dummy(self):
-        queryList = [
-            {"t1": "v1", "t2": "v2"}
-            , {"_id": 0}
-        ]
 
         bridge = Bridge()
-        bridge.application('App1').Schema('JoinPage').find(queryList)
+        bridge.application('App1').Schema('JoinPage').find({"dd":"dd"})
+        bridge.application('App1').Schema('JoinPage').find({"dd":"dd"},{"ddd":0,"dddd":0})
