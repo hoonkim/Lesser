@@ -1,4 +1,5 @@
-﻿from bridge.bridge import Bridge
+﻿import sys
+from bridge.bridge import Bridge
 from unittest import TestCase
 
 
@@ -9,5 +10,4 @@ class TestBridge(TestCase):
 
     def test_dummy(self):
         bridge = Bridge()
-        print("ddd")
-        bridge.application('App1').Schema('JoinPage').find({"id":"sf","pw":"WJ"})
+        bridge.application('App1').Schema('JoinPage').find({"id":"sf","pw":"WJ"}); 
