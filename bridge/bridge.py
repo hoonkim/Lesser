@@ -1,6 +1,10 @@
 ﻿import json
 from bridge.hidden_app import HiddenApp
 
+class DEFAULT_MACHINE:
+    def __init__(self):
+        self.addr ="mongodb://175.126.105.125"
+        self.port=27017
 
 class Bridge:
 
@@ -8,9 +12,8 @@ class Bridge:
         self.appList = dict()
         self.appList['App1']=None
         if machine is None:
-            print("dd")
-        else:
-            self.__machine = machine
+            machine = DEFAULT_MACHINE()
+        self.__machine = machine
 
     def application(self, name):
         if self.appList.get(name) == None:
