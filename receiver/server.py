@@ -21,7 +21,7 @@ hostPort = 8080
 lesserJob = LesserJob()
 
 userManager = UserManager()
-#minionController = cont.MinionController()
+minionController = cont.MinionController()
 
 def ProtocolToInt(str):
     if str=="GET":
