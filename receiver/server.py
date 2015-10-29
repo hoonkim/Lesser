@@ -146,7 +146,7 @@ class Lesserver(BaseHTTPRequestHandler):
 
             print ("New Server:",con.Id)
 
-            machine = Machine("127.0.0.1", con.Id, con.mongoPort)
+            machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
             user.AddMachine(machine)
 
