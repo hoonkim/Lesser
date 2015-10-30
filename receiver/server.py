@@ -1,5 +1,7 @@
 import sys
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer, urllib
+from bson import json_util
+import pymongo
 
 sys.path.append("../")
 
@@ -13,7 +15,8 @@ import time
 
 
 hostName = "175.126.105.125"
-hostPort = 80
+#hostName = "localhost"
+hostPort = 8080
 
 lesserJob = LesserJob()
 
@@ -52,16 +55,19 @@ class Lesserver(BaseHTTPRequestHandler):
 
         print("query parse", parse_qs(parse_result.query))
 
-        urlPath = parse_result.path
-        if urlPath.endswith('/') == False:
-            urlPath += '/'
+        urlPath = parse_url(parse_result.path)
+        appName = urlPath[0]
 
-        appName = urlPath.split('/')[1]
+        scheme = ".".join(urlPath[1:])
+        print("scheme :", scheme )
+
         user = userManager.searchUser(appName)
         if user is None:
             print("Unavailable User")
             #TODO: Guide move to useradd procedure
             return 0
+
+        print(parse_result.query)
 
         abcd = parse_qs(parse_result.query)
 
@@ -69,19 +75,6 @@ class Lesserver(BaseHTTPRequestHandler):
         for key in abcd:
             qsDict[key] = abcd[key][0]
         print(qsDict)
-
-        urlPath = parse_result.path
-        if urlPath.endswith('/') == False:
-            urlPath += '/'
-
-        appName = urlPath.split('/')[1]
-        print("####User:",appName)
-        
-        user = userManager.searchUser(appName)
-        if user is None:
-            print("Unavailable User", appName)
-            #TODO: Guide move to useradd procedure
-            return 0
 
         machine = user.getFirstMachine()
         if machine is None:
@@ -98,10 +91,27 @@ class Lesserver(BaseHTTPRequestHandler):
 
 
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
+            #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
+
             user.AddMachine(machine)
 
+        print(parse_result.path)
+
+
         #TODO: Add Machine argument
-        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, "{}" ,machine)
+        #lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, "{}" ,machine)
+
+        ret = {}
+        try:
+            db = MongoClient(machine.addr, machine.port)
+            data = json_util.dumps(db[appName][scheme].find(qsDict))
+        except ConnectionError:
+            ret['error'] = "Connection Error"
+        except pymongo.errors.CollectionInvalid :
+            ret['error'] = "Wrong type of collection"
+
+        self.wfile.write(data.encode("utf-8"))
+
 
 
     def do_POST (self):
@@ -110,14 +120,15 @@ class Lesserver(BaseHTTPRequestHandler):
         self.end_headers()
 
         parse_result = urlparse(self.path)
-        urlPath = parse_result.path
-        
-        if urlPath.endswith('/') == False:
-            urlPath += '/'
+        urlPath = parse_url(parse_result.path)
 
-        appName = urlPath.split('/')[1]
+        appName = urlPath[0]
+        scheme = ".".join(urlPath[1:])
+
         user = userManager.searchUser(appName)
-        if user == None:
+        print(appName)
+        print(urlPath)
+        if user is None:
             print("Unavailable User")
             #TODO: Guide move to useradd procedure
             return 0
@@ -135,33 +146,43 @@ class Lesserver(BaseHTTPRequestHandler):
 
             print ("New Server:",con.Id)
 
-            machine = Machine("127.0.0.1", con.Id, con.mongoPort)
+            machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
+            #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
             user.AddMachine(machine)
 
-        #print("client addr", self.client_address) #{'127.0.0.1', 50286}
-        #print("command", self.command) #POST
-        #print("request line",self.requestline) #POST /abcd/efgb/aa?bb=cc&dd=ee&ff=gg HTTP/1.1
-
-        #print("path",parse_result.path) #/abcd/efgb/aa
-        #print("query",parse_result.query) #bb=cc&dd=ee&ff=gg
-
-        #print("query parse", parse_qs(parse_result.query)) #query jsonbody
 
         content_length = int(self.headers.get('content-length', 0))  #read header
         #print("content-length:",content_length) #length
-        encoded_body = self.rfile.read(content_length)
-        #print(type(encoded_body)) #type
-        #print(encoded_body.decode('utf-8')) #encode output
 
-        abcd = parse_qs(parse_result.query)
+        body =  self.rfile.read(content_length)
+        encoded_body = body.decode('utf-8')
+        print(type(encoded_body)) #type
 
-        qsDict = dict()
-        for key in abcd:
-            qsDict[key] = abcd[key][0]
-        print(qsDict)
+        ret = {'result' : 'Error'}
 
+        try:
+            data = parse_body(encoded_body)
 
-        lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, encoded_body.decode('utf-8'),machine)
+            print(type(data))
+            print(data)
+            print("scheme : ", scheme)
+
+            db = MongoClient(machine.addr, machine.port)
+            db[appName][scheme].insert(data)
+        except ConnectionError:
+            ret['error'] = "Connection Error"
+        except pymongo.errors.CollectionInvalid :
+            ret['error'] = "Wrong type of collection"
+        except ValueError :
+            ret['error'] = "Wrong formatted Json!"
+        else :
+            ret['result'] = "Success"
+
+        response = json.dumps(ret)
+
+        self.wfile.write(response.encode("utf-8"))
+
+        #lesserJob.add_work(self.client_address[0], self.client_address[1], ProtocolToInt(self.command), parse_result.path, qsDict, encoded_body.decode('utf-8'),machine)
 
 
 
