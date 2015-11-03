@@ -10,7 +10,7 @@ class HiddenApp:
     def __init__(self, machine):
         self.schemaList = dict()
         self.columnList = dict()
-        self.THRESHOLD = 1000000;#10000
+        self.THRESHOLD = 100;
         self.pushCount = 0;
         self.__machine = machine
 
@@ -55,24 +55,17 @@ class HiddenApp:
             for newSchema in newSchemaList:
                 print(newSchema)  
                 beforeSchema = self.schemaList[newSchema['URL']].schemaValue
-                cursor = self.db[beforeSchema['URL']].find()
+                for child in beforeSchema['child']:
+                    self.db[child['URL']].drop()
+                self.db[beforeSchema['URL']].drop()
+
+                cursor = self.db[beforeSchema['URL']+"_default"].find()
                 for data in cursor:
-                    beforeData=dict()
-                    for column in beforeSchema['column']:
-                        beforeData[column] = data[column]
-                    pk = data['_id']
-                    for child in beforeSchema['child']:
-                        beforeData.update( self.db[child['URL']].find_one({'fk':pk}))
-                        del beforeData['fk'] 
-                    #print(beforeData)
-                #cursor = self.db[newSchema['URL']].find()
-                #for data in cursor:
-                    data = beforeData
                     newData=dict()
                     for column in newSchema['column']:
                         newData[column] = data[column] 
-                    self.db[newSchema['URL']+"_0"].insert(newData)
-                    pk = self.db[newSchema['URL']+"_0"].find_one(newData)['_id']
+                    self.db[newSchema['URL']].insert(newData)
+                    pk = self.db[newSchema['URL']].find_one(newData)['_id']
                     for child in newSchema['child']:
                         newData=dict()
                         for column in child['column']:
@@ -80,12 +73,7 @@ class HiddenApp:
                         newData['fk'] = pk
                         self.db[child['URL']].insert(newData) 
 
-                
-                for child in beforeSchema['child']:
-                    self.db[child['URL']].drop()
-                self.db[beforeSchema['URL']].drop()
-                self.db[newSchema['URL']+"_0"].rename(newSchema['URL'])
-                self.schemaList[newSchema['URL']].schemaValue = newSchema
+                self.schemaList[newSchema['URL']].setSchemaValue(newSchema)
                 #update db schema
                 self.db['SchemaList'].remove({'URL':beforeSchema['URL']})
                 self.db['SchemaList'].insert(newSchema)

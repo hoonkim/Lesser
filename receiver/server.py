@@ -104,8 +104,10 @@ class Lesserver(BaseHTTPRequestHandler):
 
         ret = {}
         try:
-            db = MongoClient(machine.addr, machine.port)
-            data = json_util.dumps(db[appName][scheme].find(qsDict))
+            #db = MongoClient(machine.addr, machine.port)
+            bridge = Bridge(machine)
+            data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict))
+
         except ConnectionError:
             ret['error'] = "Connection Error"
         except pymongo.errors.CollectionInvalid :
@@ -169,8 +171,11 @@ class Lesserver(BaseHTTPRequestHandler):
             print(data)
             print("scheme : ", scheme)
 
-            db = MongoClient(machine.addr, machine.port)
-            db[appName][scheme].insert(data)
+            #Create Bridge here.
+            bridge = Bridge(machine)
+            bridge.application(appName).schema(scheme).insert(data)
+
+
         except ConnectionError:
             ret['error'] = "Connection Error"
         except pymongo.errors.CollectionInvalid :
