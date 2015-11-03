@@ -106,7 +106,7 @@ class Lesserver(BaseHTTPRequestHandler):
         try:
             #db = MongoClient(machine.addr, machine.port)
             bridge = Bridge(machine)
-            data = json_util.dumps(bridge.application(appName).scheme(scheme).find(qsDict))
+            data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict))
 
         except ConnectionError:
             ret['error'] = "Connection Error"
@@ -173,7 +173,7 @@ class Lesserver(BaseHTTPRequestHandler):
 
             #Create Bridge here.
             bridge = Bridge(machine)
-            bridge.application(appName).scheme(scheme).insert(data)
+            bridge.application(appName).schema(scheme).insert(data)
 
 
         except ConnectionError:
