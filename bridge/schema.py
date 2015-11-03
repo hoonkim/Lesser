@@ -53,15 +53,21 @@
             self.schemaList.append(Schema(childS,self.db,self.push,self.depth+1))
 
     def equalList(self,columnList1, columnList2):
+        if len(columnList1) != len(columnList2):
+            return False
         for c1 in columnList1:
             hasC = False
             for c2 in columnList2:
                 if c1 == c2:
                     hasC = True
+                    columnList2.remove(c2)
                     break;
             if hasC == False:
                 return False
-        return True
+        if len(columnList2) >0:
+            return False
+        else:
+            return True
 
     def find(self, param1, param2=None):
         try:

@@ -36,7 +36,7 @@ class TestBridge(TestCase):
                  print ("insert faild", sys.exc_info()[0])
 
 
-        cursor = bridge.application('App3').schema('JoinPage').find({'phone':"01017935084"},{'name':1})
+        cursor = bridge.application('App3').schema('JoinPage').find({'phone':"01017935084"})
         data = json_util.dumps(cursor)
         print(data)
 
