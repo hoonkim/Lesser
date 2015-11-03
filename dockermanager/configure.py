@@ -9,8 +9,9 @@ mongoPort = '27017'   #example of mongo port in docker image
 
 path = '/'  #disk, mem info location path
 
-diskLimit = 3 * 1000 * 1024 * 1024 # 3GB m
-memLimit = 1 * 1000 *1024 * 1024 # 1GB
+gigaByte = 1000 * 1024 * 1024
+diskLimit = 3 * gigaByte# 3GB
+memLimit = 1 * gigaByte # 1GB
 
 configObj = {
     "image":"dejawa/lesser",

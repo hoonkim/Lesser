@@ -10,7 +10,7 @@ test = conf.configObj
 # test['lesser'] = 801
 test['lesserId'] = "testuser"
 
-disk = lesser.diskSpace()
+disk = lesser.diskInfo()
 # con = lesser.upLesser(test)
 print("1")
 # print (con.Id)
