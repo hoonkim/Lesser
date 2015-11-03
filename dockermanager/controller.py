@@ -109,7 +109,7 @@ class MinionController:
 
     #user lesser minion delete
     def delLesser(self, Id):
-        return self.conn.remove_container( Id )
+        return self.conn.remove_container( Id , v=True )
 
     def downLesser(self, Id):
         self.stopLesser(Id)
