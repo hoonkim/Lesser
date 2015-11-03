@@ -1,7 +1,10 @@
 ﻿class Schema:
-    def __init__(self, jsonSchema, db, push):
+    def __init__(self, jsonSchema, db, push,depth=None):
         self.name = jsonSchema["URL"]
         self.db = db
+        self.depth = 0
+        if depth != None:
+            self.depth = depth
         self.schemalistConnection = db['SchemaList']
         self.schemaConnect = db[self.name]
         self.push = push
@@ -47,70 +50,115 @@
         self.schemaValue = newSchemaValue
         self.schemaList.clear()
         for childS in newSchemaValue['child']:
-            self.schemaList.append(Schema(childS,self.db,self.push))
+            self.schemaList.append(Schema(childS,self.db,self.push,self.depth+1))
 
+    def equalList(self,columnList1, columnList2):
+        for c1 in columnList1:
+            hasC = False
+            for c2 in columnList2:
+                if c1 == c2:
+                    hasC = True
+                    break;
+            if hasC == False:
+                return False
+        return True
 
-        #현재 스키마와 다르면 DB Data change!!!
-
-        #allColumnList를 뺴고 현재 schemaValue의 칼럼리스트를 가지고있으면됨
-        #find / insert 할 때 self.push함수 호출시 중복되지 않도록 주의
-        #find / insert 할 때 schema의 자식들을 돌며 columnList 일치시 쿼리를 날림
-        #스키마가 분할되어 있을 시 find의 경우 루트스키마의 _id값을 알아낸 후 자식스키마의 fk로 find, 결과는 merge하면됨
-        #스키마가 분할되어 있을 시 insert는 내일 생각하고 잠자자
-
-#조건 / 찾는 column이 한 스키마 내인경우 그냥 쓰면 됨
-#조건이 부모 / 찾는 column이 자식 스키마 인 경우
-#조건이 자식 / 찾는 column이 부모 스키마인 경우
     def find(self, param1, param2=None):
-        keyList=list()
-        for key in param1.keys():
-            keyList.append(self.name+"."+key)
-        self.push("read",keyList)
-        #change Query fit schemaValue
-        if param2 is None:
-            return self.schemaConnect.find_one(param1)
-        else:
-            return self.schemaConnect.find_one(param1, param2)
+        try:
+            keyList=list()
+            keyList2 = list()
+
+            if param2 != None:
+                for key in param1.keys():
+                    keyList.append(self.name+"."+key)
+                    keyList2.append(key)
+                for key in param2.keys():
+                    keyList.append(self.name+"."+key)
+                    keyList2.append(key)
+            else:
+                if self.depth !=0 :
+                    raise Exception
+                allList = self.getAllColumnList()
+                for key in allList:
+                    keyList.append(self.name+"."+key)
+                    keyList2.append(key)
+
+            if self.depth == 0 :
+                self.push("read",keyList)
+
+            if self.equalList(self.schemaColumnList,keyList2):
+                if param2 is None:
+                    return self.schemaConnect.find(param1)
+                else:
+                    return self.schemaConnect.find(param1, param2)
+
+            for childS in self.schemaList:
+                cursor = childS.find(param1, param2)
+                if cursor is not None:
+                    return cursor
+
+            if self.depth == 0:
+                if param2 is None:
+                    return self.db[self.name+"_default"].find(param1)
+                else:
+                    return self.db[self.name+"_default"].find(param1,param2)
+
+        except Exception:
+            if self.depth == 0:
+                if param2 is None:
+                    return self.db[self.name+"_default"].find(param1)
+                else:
+                    return self.db[self.name+"_default"].find(param1,param2)
+
 
     def insert(self, param1, param2=None):
-        keyList=list()
-        hasfKey = False
-        for key in param1.keys():
-            if key == "fk":
-                hasfKey = True
-                break
-        for key in param1.keys():
-            keyList.append(self.name+"."+key)
+        try:
+            keyList=list()
+            hasfKey = False
+            for key in param1.keys():
+                if key == "fk":
+                    hasfKey = True
+                    break
+            for key in param1.keys():
+                keyList.append(self.name+"."+key)
 
-            if self.hasColumnAtAll(key) is False  and hasfKey is False:
-                self.schemaColumnList.append(key)
-                self.schemaValue['column'].append(key)
-                self.schemalistConnection.update({'URL':self.name} , {'$push':{'column':key}},True)
+                if self.hasColumnAtAll(key) is False  and hasfKey is False:
+                    self.schemaColumnList.append(key)
+                    self.schemaValue['column'].append(key)
+                    self.schemalistConnection.update({'URL':self.name} , {'$push':{'column':key}},True)
 
-        if hasfKey==False:  #if not child schema
-            self.push("create",keyList)
+            if hasfKey==False:  #if not child schema
+                self.push("create",keyList)
 
-        currentColumnList = self.hasColumnList(param1.keys())
-        if len(currentColumnList)==0 and hasfKey==True:
-            return
+            currentColumnList = self.hasColumnList(param1.keys())
+            if len(currentColumnList)==0 and hasfKey==True:
+                return
 
-        newParam=dict()
-        for currentColumn in currentColumnList:
-            newParam[currentColumn] = param1[currentColumn]
-        if hasfKey==True:
-            newParam['fk'] = param1['fk']
-        if param2 is None:
-            _id= self.schemaConnect.insert_one(newParam).inserted_id
-        else:
-            _id= self.schemaConnect.insert_one(newParam,param2).inserted_id
+            newParam=dict()
+            for currentColumn in currentColumnList:
+                newParam[currentColumn] = param1[currentColumn]
+            if hasfKey==True:
+                newParam['fk'] = param1['fk']
+            if param2 is None:
+                _id= self.schemaConnect.insert_one(newParam).inserted_id
+            else:
+                _id= self.schemaConnect.insert_one(newParam,param2).inserted_id
 
-        newParam = dict()
-        newParam['fk'] = _id
-        for key in param1.keys():
-            if self.hasColumn(key) == False:
-                newParam[key] = param1[key]
-        for childS in self.schemaList:
-            childS.insert(newParam, param2)
+            newParam = dict()
+            newParam['fk'] = _id
+            for key in param1.keys():
+                if self.hasColumn(key) == False:
+                    newParam[key] = param1[key]
+            for childS in self.schemaList:
+                childS.insert(newParam, param2)
+        except Exception:
+            pass
+        finally:
+            if hasfKey == False:
+                if param2 is None:
+                    self.db[self.name+"_default"].insert(param1)
+                else:
+                    self.db[self.name+"_default"].insert(param1,param2)
 
 
     def getColumnList(self):
