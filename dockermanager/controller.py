@@ -1,6 +1,7 @@
 __author__ = 'dejawa'
 from docker import Client
 import dockermanager.configure as conf
+import psutil
 import json
 
 class MinionController:
@@ -130,4 +131,21 @@ class MinionController:
     def cliConfigure(self, obj):
         return
 
+    def diskInfo(self):
+
+        disk={"total":'', "used":'', "threshhold":False}
+        disk['total'] = psutil.disk_usage(conf.path).total
+        disk['used'] = psutil.disk_usage(conf.path).used
+        if (disk['total'] - disk['used']) <= conf.diskLimit:
+            disk["threshhold"]=True
+        return disk
+
+    def memInfo(self):
+        mem={"total":'', "used":'', "threshhold":False}
+        mem['total'] = psutil.virtual_memory().total
+        mem['used'] = psutil.virtual_memory().used
+
+        if (mem['total'] - mem['used']) <= conf.memLimit:
+            mem["threshhold"]=True
+        return mem
 

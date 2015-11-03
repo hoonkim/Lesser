@@ -10,8 +10,9 @@ test = conf.configObj
 # test['lesser'] = 801
 test['lesserId'] = "testuser"
 
+disk = lesser.diskSpace()
 # con = lesser.upLesser(test)
-#
+print("1")
 # print (con.Id)
 # print ( lesser.downLesser(con.Id) )
 # print (lesser.conn.port('763da610dcc0a3bd3a25eddacc1c34096219c9cf9ef12157477f174156fd46ca',''))
