@@ -11,7 +11,7 @@ path = '/'  #disk, mem info location path
 
 gigaByte = 1000 * 1024 * 1024
 diskLimit = 3# 3GB
-memLimit = 1 # 1GB
+memLimit = 0.1 # 1GB
 
 configObj = {
     "image":"dejawa/lesser",
