@@ -164,7 +164,28 @@ class Lesserver(BaseHTTPRequestHandler):
 
             test['lesserId'] = user.GetUsername()
 
+            mem = lesser.memInfo()
+            disk = lesser.diskInfo()
+
+            print("Space Total : ", disk['total'], ", Used : ", disk['used'])
+            if disk['threshhold'] :
+                print("Need more space. Docker creation failed.")
+                return
+
+            else :
+                print("Space is enough")
+
+            print("Mem Total : ", mem['total', ", Used : ", mem['used']])
+            if mem['threshhold'] :
+                print("Need more Memory. Docker creation failed.")
+                return
+
+            else :
+                print("Memory is enough")
+
             con = lesser.upLesser(test)
+
+
 
             print ("New Server:",con.Id)
 
