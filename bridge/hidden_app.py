@@ -41,6 +41,7 @@ class HiddenApp:
                 self.schemaList[document["URL"]] = Schema(document,self.db,self.push)
         
     def push(self, type, keys):
+        print("Push count : ", self.pushCount)
         self.pushCount +=1
         key = self.convertColumn.columnsToIdxString(keys)
         self.collectionController.Push(type , key)
