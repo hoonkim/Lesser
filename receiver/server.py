@@ -107,7 +107,7 @@ class Lesserver(BaseHTTPRequestHandler):
 
             con = lesser.upLesser(test)
 
-            print ("New Server:",con.Id," port:", con.mongoPort)
+            print ("New Server:",con.Id,"\nport:", con.mongoPort)
 
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
@@ -187,7 +187,7 @@ class Lesserver(BaseHTTPRequestHandler):
 
 
 
-            print ("New Server:",con.Id)
+            print ("New Server:",con.Id,"\nport:", con.mongoPort)
 
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)

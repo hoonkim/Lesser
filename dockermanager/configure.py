@@ -6,7 +6,6 @@ port = '22375'           #server docker port
 
 clientPort = '80'     #example of lesser client port in docker image
 mongoPort = '27017'   #example of mongo port in docker image
-
 path = '/'  #disk, mem info location path
 
 gigaByte = 1000 * 1024 * 1024
