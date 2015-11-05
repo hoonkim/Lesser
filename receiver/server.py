@@ -113,6 +113,7 @@ class Lesserver(BaseHTTPRequestHandler):
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
 
             user.AddMachine(machine)
+            user.setBridge(Bridge(machine))
 
         print(parse_result.path)
 
@@ -123,7 +124,7 @@ class Lesserver(BaseHTTPRequestHandler):
         ret = {}
         try:
             #db = MongoClient(machine.addr, machine.port)
-            bridge = Bridge(machine)
+            bridge = user.getBridge()
             data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict))
 
         except ConnectionError:
@@ -192,6 +193,7 @@ class Lesserver(BaseHTTPRequestHandler):
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
             user.AddMachine(machine)
+            user.setBridge(Bridge(machine))
 
 
         content_length = int(self.headers.get('content-length', 0))  #read header
@@ -211,7 +213,7 @@ class Lesserver(BaseHTTPRequestHandler):
             print("scheme : ", scheme)
 
             #Create Bridge here.
-            bridge = Bridge(machine)
+            bridge = user.getBridge()
             bridge.application(appName).schema(scheme).insert(data)
 
 

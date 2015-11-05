@@ -43,6 +43,12 @@ class User():
 
     def AddMachine(self, machine):
         self.machineList.append(machine)
+
+    def setBridge(self, bridge):
+        self.bridge = bridge
+
+    def getBridge(self):
+        return self.bridge
     
     def findMachine(self, searchType, searchValue):
         for i in self.machineList:
