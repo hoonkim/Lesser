@@ -96,7 +96,7 @@ class Lesserver(BaseHTTPRequestHandler):
             else :
                 print("Space is enough")
 
-            print("Mem Total : ", mem['total', ", Used : ", mem['used']])
+            print("Mem Total : ", mem['total'], ", Used : ", mem['used'])
             if mem['threshhold'] :
                 print("Need more Memory. Docker creation failed.")
                 return
@@ -175,7 +175,7 @@ class Lesserver(BaseHTTPRequestHandler):
             else :
                 print("Space is enough")
 
-            print("Mem Total : ", mem['total', ", Used : ", mem['used']])
+            print("Mem Total : ", mem['total'], ", Used : ", mem['used'])
             if mem['threshhold'] :
                 print("Need more Memory. Docker creation failed.")
                 return
