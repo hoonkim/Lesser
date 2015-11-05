@@ -79,17 +79,35 @@ class Lesserver(BaseHTTPRequestHandler):
 
         machine = user.getFirstMachine()
         if machine is None:
-            print("No Machine for User:",appName)
+            print("No Machine for User:",appName, ". Docker creation starts.")
             lesser = cont.MinionController()
             test = conf.configObj
 
             test['lesserId'] = user.GetUsername()
 
+            mem = lesser.memInfo()
+            disk = lesser.diskInfo()
+
+            print("Space Total : ", disk['total'], ", Used : ", disk['used'])
+            if disk['threshhold'] :
+                print("Need more space. Docker creation failed.")
+                return
+
+            else :
+                print("Space is enough")
+
+            print("Mem Total : ", mem['total', ", Used : ", mem['used']])
+            if mem['threshhold'] :
+                print("Need more Memory. Docker creation failed.")
+                return
+
+            else :
+                print("Memory is enough")
+
+
             con = lesser.upLesser(test)
 
             print ("New Server:",con.Id," port:", con.mongoPort)
-
-
 
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
