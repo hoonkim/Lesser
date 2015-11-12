@@ -10,7 +10,7 @@ class HiddenApp:
     def __init__(self, machine):
         self.schemaList = dict()
         self.columnList = dict()
-        self.THRESHOLD = 100;
+        self.THRESHOLD = 50;
         self.pushCount = 0;
         self.__machine = machine
 
@@ -60,18 +60,22 @@ class HiddenApp:
                 self.db[beforeSchema['URL']].drop()
 
                 cursor = self.db[beforeSchema['URL']+"_default"].find()
+                newData=dict()
                 for data in cursor:
-                    newData=dict()
+                    newData.clear()
                     for column in newSchema['column']:
-                        newData[column] = data[column] 
-                    self.db[newSchema['URL']].insert(newData)
-                    pk = self.db[newSchema['URL']].find_one(newData)['_id']
+                        if column in data:
+                            newData[column] = data[column]
+                    pk = self.db[newSchema['URL']].insert_one(newData).inserted_id
                     for child in newSchema['child']:
-                        newData=dict()
+                        newData.clear()
                         for column in child['column']:
-                            newData[column] = data[column] 
+                            if column in data:
+                                newData[column] = data[column]
+                        if len(newData.keys())==0:
+                            continue
                         newData['fk'] = pk
-                        self.db[child['URL']].insert(newData) 
+                        self.db[child['URL']].insert_one(newData)
 
                 self.schemaList[newSchema['URL']].setSchemaValue(newSchema)
                 #update db schema
