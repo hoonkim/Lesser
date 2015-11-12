@@ -79,22 +79,41 @@ class Lesserver(BaseHTTPRequestHandler):
 
         machine = user.getFirstMachine()
         if machine is None:
-            print("No Machine for User:",appName)
+            print("No Machine for User:",appName, ". Docker creation starts.")
             lesser = cont.MinionController()
             test = conf.configObj
 
             test['lesserId'] = user.GetUsername()
 
+            mem = lesser.memInfo()
+            disk = lesser.diskInfo()
+
+            print("Space Total : ", disk['total'], ", Used : ", disk['used'])
+            if disk['threshhold'] :
+                print("Need more space. Docker creation failed.")
+                return
+
+            else :
+                print("Space is enough")
+
+            print("Mem Total : ", mem['total'], ", Used : ", mem['used'])
+            if mem['threshhold'] :
+                print("Need more Memory. Docker creation failed.")
+                return
+
+            else :
+                print("Memory is enough")
+
+
             con = lesser.upLesser(test)
 
-            print ("New Server:",con.Id," port:", con.mongoPort)
-
-
+            print ("New Server:",con.Id,"\nport:", con.mongoPort)
 
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
 
             user.AddMachine(machine)
+            user.setBridge(Bridge(machine))
 
         print(parse_result.path)
 
@@ -105,7 +124,7 @@ class Lesserver(BaseHTTPRequestHandler):
         ret = {}
         try:
             #db = MongoClient(machine.addr, machine.port)
-            bridge = Bridge(machine)
+            bridge = user.getBridge()
             data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict))
 
         except ConnectionError:
@@ -146,13 +165,35 @@ class Lesserver(BaseHTTPRequestHandler):
 
             test['lesserId'] = user.GetUsername()
 
+            mem = lesser.memInfo()
+            disk = lesser.diskInfo()
+
+            print("Space Total : ", disk['total'], ", Used : ", disk['used'])
+            if disk['threshhold'] :
+                print("Need more space. Docker creation failed.")
+                return
+
+            else :
+                print("Space is enough")
+
+            print("Mem Total : ", mem['total'], ", Used : ", mem['used'])
+            if mem['threshhold'] :
+                print("Need more Memory. Docker creation failed.")
+                return
+
+            else :
+                print("Memory is enough")
+
             con = lesser.upLesser(test)
 
-            print ("New Server:",con.Id)
+
+
+            print ("New Server:",con.Id,"\nport:", con.mongoPort)
 
             machine = Machine("127.0.0.1", con.Id, int(con.mongoPort))
             #machine = Machine("127.0.0.1", user.GetUsername() , 27017)
             user.AddMachine(machine)
+            user.setBridge(Bridge(machine))
 
 
         content_length = int(self.headers.get('content-length', 0))  #read header
@@ -172,7 +213,7 @@ class Lesserver(BaseHTTPRequestHandler):
             print("scheme : ", scheme)
 
             #Create Bridge here.
-            bridge = Bridge(machine)
+            bridge = user.getBridge()
             bridge.application(appName).schema(scheme).insert(data)
 
 

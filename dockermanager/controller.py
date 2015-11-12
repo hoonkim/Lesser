@@ -1,6 +1,7 @@
 __author__ = 'dejawa'
 from docker import Client
 import dockermanager.configure as conf
+import psutil
 import json
 
 class MinionController:
@@ -109,7 +110,7 @@ class MinionController:
 
     #user lesser minion delete
     def delLesser(self, Id):
-        return self.conn.remove_container( Id ,v=True)
+        return self.conn.remove_container( Id , v=True )
 
     def downLesser(self, Id):
         self.stopLesser(Id)
@@ -129,3 +130,22 @@ class MinionController:
 
     def cliConfigure(self, obj):
         return
+
+    def diskInfo(self):
+        disk={"total":'', "used":'', "threshhold":False}
+        disk['total'] = psutil.disk_usage(conf.path).total/conf.gigaByte
+        disk['used'] = psutil.disk_usage(conf.path).used/conf.gigaByte
+
+        if (disk['total'] - disk['used']) <= conf.diskLimit:
+            disk["threshhold"]=True
+        return disk
+
+    def memInfo(self):
+        mem={"total":'', "used":'', "threshhold":False}
+        mem['total'] = psutil.virtual_memory().total/conf.gigaByte
+        mem['used'] = psutil.virtual_memory().used/conf.gigaByte
+
+        if (mem['total'] - mem['used']) <= conf.memLimit:
+            mem["threshhold"]=True
+        return mem
+
