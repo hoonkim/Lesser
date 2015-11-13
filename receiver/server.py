@@ -60,7 +60,7 @@ class Lesserver(BaseHTTPRequestHandler):
 
         if len(urlPath) is 0 :
             ret = {
-                "status" : "ok"
+                "status" : "ok", "request" : "GET"
             }
             self.wfile.write(json.dumps(ret).encode('utf-8'))
             return
@@ -152,6 +152,13 @@ class Lesserver(BaseHTTPRequestHandler):
 
         parse_result = urlparse(self.path)
         urlPath = parse_url(parse_result.path)
+
+        if len(urlPath) is 0 :
+            ret = {
+                "status" : "ok", "request" : "POST"
+            }
+            self.wfile.write(json.dumps(ret).encode('utf-8'))
+            return
 
         appName = urlPath[0]
         scheme = ".".join(urlPath[1:])
