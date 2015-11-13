@@ -57,6 +57,14 @@ class Lesserver(BaseHTTPRequestHandler):
         print("query parse", parse_qs(parse_result.query))
 
         urlPath = parse_url(parse_result.path)
+
+        if len(urlPath) is 0 :
+            ret = {
+                "status" : "ok"
+            }
+            self.wfile.write(json.dumps(ret).encode('utf-8'))
+            return
+
         appName = urlPath[0]
 
         scheme = ".".join(urlPath[1:])
