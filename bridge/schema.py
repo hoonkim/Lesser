@@ -117,6 +117,7 @@
                 if param2 is None:
                     return self.db[self.name+"_default"].find(param1)
                 else:
+                    param2["_id"] = 0
                     return self.db[self.name+"_default"].find(param1,param2)
 
 
