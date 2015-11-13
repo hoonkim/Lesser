@@ -103,10 +103,13 @@
                 if cursor is not None:
                     return cursor
 
+            no_id = {"_id" : 0 }
+
             if self.depth == 0:
                 if param2 is None:
-                    return self.db[self.name+"_default"].find(param1)
+                    return self.db[self.name+"_default"].find(param1, no_id)
                 else:
+                    param2["_id"] = 0
                     return self.db[self.name+"_default"].find(param1,param2)
 
         except Exception:
