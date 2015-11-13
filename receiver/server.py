@@ -81,9 +81,18 @@ class Lesserver(BaseHTTPRequestHandler):
         abcd = parse_qs(parse_result.query)
 
         qsDict = dict()
+        seDict = dict()
+
         for key in abcd:
-            qsDict[key] = abcd[key][0]
+            for value in abcd[key]:
+                if value is '':
+                    seDict[key] = 1
+
+                else :
+                    qsDict[key] = abcd[key][0]
+
         print(qsDict)
+        print(seDict)
 
         machine = user.getFirstMachine()
         if machine is None:
@@ -133,7 +142,10 @@ class Lesserver(BaseHTTPRequestHandler):
         try:
             #db = MongoClient(machine.addr, machine.port)
             bridge = user.getBridge()
-            data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict))
+            if len(seDict) is 0:
+                data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict))
+            else :
+                data = json_util.dumps(bridge.application(appName).schema(scheme).find(qsDict, seDict))
 
         except ConnectionError:
             ret['error'] = "Connection Error"
