@@ -78,7 +78,7 @@ class Lesserver(BaseHTTPRequestHandler):
 
         print(parse_result.query)
 
-        abcd = parse_qs(parse_result.query)
+        abcd = parse_qs(parse_result.query, True)
 
         qsDict = dict()
         seDict = dict()
