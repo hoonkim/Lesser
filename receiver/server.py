@@ -86,7 +86,16 @@ class Lesserver(BaseHTTPRequestHandler):
         for key in abcd:
             for value in abcd[key]:
                 if value is '':
-                    seDict[key] = 1
+                    if "<=" in value :
+                        qsDict[key] = {"$lte" : value.split('<=')[1]}
+                    elif "<" in value :
+                        qsDict[key] = {"$lt" : value.split('<=')[1]}
+                    elif ">" in value :
+                        qsDict[key] = {"$gte" : value.split('<')[1]}
+                    elif ">=" in value :
+                        qsDict[key] = {"$gt" : value.split('>=')[1]}
+                    else :
+                        seDict[key] = 1
 
                 else :
                     if value.isdigit():
