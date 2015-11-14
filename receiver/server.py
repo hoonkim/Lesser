@@ -89,9 +89,9 @@ class Lesserver(BaseHTTPRequestHandler):
                     seDict[key] = 1
 
                 else :
-                    if qsDict[key].isdigit():
+                    if value.isdigit():
                         qsDict[key] = int(value)
-                    elif qsDict[key].replace('.', '', 1).isdigit():
+                    elif value.replace('.', '', 1).isdigit():
                         qsDict[key] = float(value)
                     else :
                         qsDict[key] = value
