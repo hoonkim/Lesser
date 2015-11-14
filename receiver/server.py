@@ -86,14 +86,14 @@ class Lesserver(BaseHTTPRequestHandler):
         for key in abcd:
             for value in abcd[key]:
                 if value is '':
-                    if "<=" in value :
-                        qsDict[key] = {"$lte" : value.split('<=')[1]}
-                    elif "<" in value :
-                        qsDict[key] = {"$lt" : value.split('<=')[1]}
-                    elif ">" in value :
-                        qsDict[key] = {"$gte" : value.split('<')[1]}
-                    elif ">=" in value :
-                        qsDict[key] = {"$gt" : value.split('>=')[1]}
+                    if "<=" in key :
+                        qsDict[key.split('<=')[0]] = {"$lte" : key.split('<=')[1]}
+                    elif "<" in key :
+                        qsDict[ key.split('<')[0]] = {"$lt" : key.split('<')[1]}
+                    elif ">" in key :
+                        qsDict[key.split('>')[0]] = {"$gte" : key.split('>')[1]}
+                    elif ">=" in key :
+                        qsDict[key.split('>=')[0]] = {"$gt" : key.split('>=')[1]}
                     else :
                         seDict[key] = 1
 
