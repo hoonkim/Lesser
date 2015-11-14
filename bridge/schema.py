@@ -94,7 +94,7 @@
 
             if self.equalList(self.schemaColumnList,keyList2):
                 if param2 is None:
-                    return self.schemaConnect.find(param1)
+                    return self.schemaConnect.find(param1, {"_id" : 0 })
                 else:
                     return self.schemaConnect.find(param1, param2)
 
